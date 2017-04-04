@@ -115,5 +115,5 @@ class DFS_limited_One(Problem):
         return int(DFS_limited_One.routes[current_city_index][destination_city_index])
 
 limit = input("Specify the limit for the depth: ")
-bfs_tree = DFS_limited_One()
-bfs_tree.solve()
+dfs_limited = DFS_limited_One()
+dfs_limited.solve()

@@ -1,4 +1,4 @@
-Oradea, Zerind, Arad, Timisoara, Loguj, Mehadia, Dobreta, Sibiu, Rimnicu Vilcea, Craiova, Fagaras, Pitesti, Bucharest, Giurgiu, Urziceni, Neamt, Lasi, Vaslui, Hirsova, Eforie
+Oradea, Zerind, Arad, Timisoara, Lugoj, Mehadia, Dobreta, Sibiu, Rimnicu Vilcea, Craiova, Fagaras, Pitesti, Bucharest, Giurgiu, Urziceni, Neamt, Iasi, Vaslui, Hirsova, Eforie
 0, 71, -1, -1, -1, -1, -1, 151, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 71, 0, 75, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 -1, 75, 0, 118, -1, -1, -1, 140, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
