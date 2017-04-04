@@ -67,9 +67,12 @@ class BFS_Tree_One(Problem):
 
     def print_path(self, state):
         path = state.path
-        print("This is the path:")
+        print("This is the path:", end=' ')
         for i in path:
-            print(i)
+            if i == self.end:
+                print(i)
+            else:
+                print(i, end=' --> ')
         print("This is the cost:" + str(state.path_cost))
 
     def goal_test(self, state):
@@ -83,7 +86,7 @@ class BFS_Tree_One(Problem):
 
     @staticmethod
     def path_cost(state, step_cost):
-        return state.path_cost + step_cost
+        return state.path_cost+step_cost
 
     @staticmethod
     def result(state, action):
