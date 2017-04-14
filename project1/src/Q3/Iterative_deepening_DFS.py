@@ -19,6 +19,7 @@ class State:
                  , boat  # a boolean. true means that the boat is on the left side, and false means the opposite
                  , path_cost=0
                  , path=None
+                 , depth = 0
                  ):
         if path is None:
             path = []
@@ -29,33 +30,38 @@ class State:
         self.boat = boat
         self.path_cost = path_cost
         self.path = path
+        self.depth = depth
 
     def expand(self):
-        exp = queue.Queue()
-        my_actions = BFS.actions(self)
+        exp = queue.LifoQueue()
+        if self.depth == Iterative_deepening_DFS.limit:
+            return exp
+        my_actions = Iterative_deepening_DFS.actions(self)
         for i in my_actions:
-            exp.put(BFS.result(self, i))
+            exp.put(Iterative_deepening_DFS.result(self, i))
         return exp
 
 
-class BFS(Problem):
+class Iterative_deepening_DFS(Problem):
     missionaries, cannibals = read_from_console()
+    limit = 0
 
     def solve(self):
-        fifo = queue.Queue()
-        root = self.initial_state()
-        if self.goal_test(root):
-            return
-        fifo.put(root)
-        while not fifo.empty():
-            current_state = fifo.get()
-            expanded = current_state.expand()
-            while not expanded.empty():
-                newly_generated = expanded.get()
-                if self.goal_test(newly_generated):
-                    self.print_path(newly_generated)
+        while True:
+            lifo = queue.LifoQueue()
+            root = self.initial_state()
+            if self.goal_test(root):
+                return
+            lifo.put(root)
+            while not lifo.empty():
+                current_state = lifo.get()
+                if self.goal_test(current_state):
+                    self.print_path(current_state)
                     return
-                fifo.put(newly_generated)
+                expanded = current_state.expand()
+                while not expanded.empty():
+                    lifo.put(expanded.get())
+            Iterative_deepening_DFS.limit += 1
         print("Sorry! there is no way :)")
 
     def print_path(self, state):
@@ -84,14 +90,14 @@ class BFS(Problem):
             return State(state.left_missionaries - action.missionaries, state.left_cannibals - action.cannibals,
                          state.right_missionaries + action.missionaries, state.right_cannibals + action.cannibals,
                          not state.boat,
-                         BFS.path_cost(state, BFS.action_cost(state, action)),
-                         state.path + [[action.missionaries, action.cannibals]])
+                         Iterative_deepening_DFS.path_cost(state, Iterative_deepening_DFS.action_cost(state, action)),
+                         state.path + [[action.missionaries, action.cannibals]], state.depth + 1)
         else:
             return State(state.left_missionaries + action.missionaries, state.left_cannibals + action.cannibals,
                          state.right_missionaries - action.missionaries, state.right_cannibals - action.cannibals,
                          not state.boat,
-                         BFS.path_cost(state, BFS.action_cost(state, action)),
-                         state.path + [[action.missionaries, action.cannibals]])
+                         Iterative_deepening_DFS.path_cost(state, Iterative_deepening_DFS.action_cost(state, action)),
+                         state.path + [[action.missionaries, action.cannibals]], state.depth + 1)
 
     @staticmethod
     def actions(state):
@@ -102,21 +108,26 @@ class BFS(Problem):
                 for j in range(0, 3 - i):  # cannibals
                     if (i == 0 and j == 0) or (i > state.left_missionaries) or (j > state.left_cannibals):
                         continue
-                    if (state.left_missionaries - i == 0 or (state.left_missionaries - i) >= (state.left_cannibals - j)) and (state.right_missionaries + i == 0 or (state.right_missionaries + i) >= (state.right_cannibals + j)):
+                    if (state.left_missionaries - i == 0 or (state.left_missionaries - i) >= (
+                        state.left_cannibals - j)) and (
+                                state.right_missionaries + i == 0 or (state.right_missionaries + i) >= (
+                        state.right_cannibals + j)):
                         my_actions.append(Action(i, j))
         else:
             for i in range(0, 3):  # missionaries
                 for j in range(0, 3 - i):  # cannibals
                     if (i == 0 and j == 0) or (i > state.right_missionaries) or (j > state.right_cannibals):
                         continue
-                    if (state.left_missionaries + i == 0 or (state.left_missionaries + i) >= (state.left_cannibals + j)) and (state.right_missionaries - i == 0 or (state.right_missionaries - i) >= (state.right_cannibals - j)):
+                    if (state.left_missionaries + i == 0 or (state.left_missionaries + i) >= (
+                        state.left_cannibals + j)) and (
+                                state.right_missionaries - i == 0 or (state.right_missionaries - i) >= (
+                        state.right_cannibals - j)):
                         my_actions.append(Action(i, j))
         return my_actions
 
     @staticmethod
     def action_cost(state, action):
         return 1
-
-
-bfs = BFS()
-bfs.solve()
+    
+dfs = Iterative_deepening_DFS()
+dfs.solve()

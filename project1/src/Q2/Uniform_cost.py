@@ -49,84 +49,58 @@ class State:
 
     def expand(self):
         exp = queue.Queue()
-        my_actions = Bidirectional.actions(self)
+        my_actions = A_star.actions(self)
         for i in my_actions:
-            result_state = Bidirectional.result(self, i)
+            result_state = A_star.result(self, i)
             exp.put(State(current_condition=result_state.current_condition,
                           position=result_state.position,
                           path=self.path + [i.direction],
-                          path_cost=self.path_cost + Bidirectional.action_cost(self, i)))
+                          path_cost=self.path_cost + A_star.action_cost(self, i)))
         return exp
 
+    def __lt__(self, other):
+        if self.path_cost < other.path_cost:
+            return True
+        else:
+            return False
 
-class Bidirectional(Problem):
+
+class A_star(Problem):
     puzzle, position = read_from_console()
     print(puzzle)
 
     def solve(self):
-        queue1 = queue.Queue()
-        queue2 = queue.Queue()
-        e1 = set()
-        e2 = set()
-        start, end = self.initial_state()
-        e1.add(two_d_array_to_string(start.current_condition))
-        e2.add(two_d_array_to_string(end.current_condition))
-        if self.goal_test(e1, e2):
+        p_queue = queue.PriorityQueue()
+        root = self.initial_state()
+        if self.goal_test(root):
             return
-        queue1.put(start)
-        queue2.put(end)
-        while not queue1.empty() or not queue2.empty():
-            if not queue1.empty():
-                from_start = queue1.get()
-                expanded1 = from_start.expand()
-                while not expanded1.empty():
-                    newly_generated1 = expanded1.get()
-                    queue1.put(newly_generated1)
-                    e1.add(two_d_array_to_string(newly_generated1.current_condition))
-            if not queue2.empty():
-                from_end = queue2.get()
-                expanded2 = from_end.expand()
-                while not expanded2.empty():
-                    newly_generated2 = expanded2.get()
-                    queue2.put(newly_generated2)
-                    e2.add(two_d_array_to_string(newly_generated2.current_condition))
-            if self.goal_test(e1, e2):
-                common = e1.intersection(e2).pop()
-                s1 = State
-                s2 = State
-                while True:
-                    s1 = queue1.get()
-                    k1 = two_d_array_to_string(s1.current_condition)
-                    if common == k1:
-                        break
-                while True:
-                    s2 = queue2.get()
-                    k2 = two_d_array_to_string(s2.current_condition)
-                    if common == k2:
-                        break
-                        print("salam")
-                self.print_path(s1, s2)
+        p_queue.put(root)
+        while not p_queue.empty():
+            current_state = p_queue.get()
+            if self.goal_test(current_state):
+                self.print_path(current_state)
+                return
+            expanded = current_state.expand()
+            while not expanded.empty():
+                p_queue.put(expanded.get())
         print("Sorry! there is no way :)")
 
-    def print_path(self, s1, s2):
-        path1 = s1.path
-        path2 = s2.path
+    def print_path(self, state):
+        path = state.path
         print("This is the path:", end=' ')
-        for i in path1:
+        for i in path:
             print(i, end=', ')
-        for j in reversed(path2):
-            print(i, end=', ')
-
-        print("This is the cost: " + str(s1.path_cost + s2.path_cost))
+        print()
+        print("This is the cost: " + str(state.path_cost))
 
     def goal_test(self, s1, s2):
-        if len(s1.intersection(s2)) == 0:
-            return False
-        else:
+        if s1.intersection(b):
             return True
+        else:
+            return False
 
     def initial_state(self):
-        return State(Bidirectional.puzzle, Bidirectional.position), State((('1', '2', '3'), ('4', '5', '6'), ('7', '8', '0')), (2, 2))
+        return State(A_star.puzzle, A_star.position)
 
     @staticmethod
     def result(state, action):
@@ -194,5 +168,5 @@ class Bidirectional(Problem):
     def action_cost(state, action):
         return 1
 
-Bidirectional = Bidirectional()
-Bidirectional.solve()
+A_star = A_star()
+A_star.solve()
