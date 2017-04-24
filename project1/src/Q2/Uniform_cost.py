@@ -49,13 +49,13 @@ class State:
 
     def expand(self):
         exp = queue.Queue()
-        my_actions = A_star.actions(self)
+        my_actions = Uniform_cost.actions(self)
         for i in my_actions:
-            result_state = A_star.result(self, i)
+            result_state = Uniform_cost.result(self, i)
             exp.put(State(current_condition=result_state.current_condition,
                           position=result_state.position,
                           path=self.path + [i.direction],
-                          path_cost=self.path_cost + A_star.action_cost(self, i)))
+                          path_cost=self.path_cost + Uniform_cost.action_cost(self, i)))
         return exp
 
     def __lt__(self, other):
@@ -65,7 +65,7 @@ class State:
             return False
 
 
-class A_star(Problem):
+class Uniform_cost(Problem):
     puzzle, position = read_from_console()
     print(puzzle)
 
@@ -100,7 +100,7 @@ class A_star(Problem):
             return False
 
     def initial_state(self):
-        return State(A_star.puzzle, A_star.position)
+        return State(Uniform_cost.puzzle, Uniform_cost.position)
 
     @staticmethod
     def result(state, action):
@@ -168,5 +168,5 @@ class A_star(Problem):
     def action_cost(state, action):
         return 1
 
-A_star = A_star()
-A_star.solve()
+Uniform_cost = Uniform_cost()
+Uniform_cost.solve()
